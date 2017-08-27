@@ -7,7 +7,7 @@ import edu.duke.*;
 import org.apache.commons.csv.*;
 import java.io.*;
 
-public class CSVMax {
+public class ProcessCSV {
     
     public CSVRecord coldestHourInFile(CSVParser parser){
         CSVRecord smallestSoFar = null;
@@ -34,6 +34,13 @@ public class CSVMax {
             }
         }
         return smallestSoFar;
+    }
+    
+     public void testcoldestHourInFile () {
+        FileResource fr = new FileResource("data/2015/weather-2015-01-01.csv");
+        CSVRecord smallest = coldestHourInFile(fr.getCSVParser());
+        System.out.println("Coldest temperature was " + smallest.get("TemperatureF") +
+                   " at " + smallest.get("TimeEST"));
     }
     
     public CSVRecord hottestHourInFile(CSVParser parser) {
