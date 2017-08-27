@@ -28,7 +28,9 @@ public class ProcessCSV {
             double currentTemp = Double.parseDouble(currentRow.get("TemperatureF"));
             double smallestTemp = Double.parseDouble(smallestSoFar.get("TemperatureF"));
             //Check if currentRow’s temperature > largestSoFar’s
-            if (currentTemp < smallestTemp) {
+            if(currentTemp == -9999){
+                //-9999 means temperature was not recorded
+            }else if (currentTemp < smallestTemp) {
                 //If so update largestSoFar to currentRow
                 smallestSoFar = currentRow;
             }
