@@ -41,12 +41,35 @@ public class ProcessCSV {
         return smallestSoFar;
     }
     
+    public CSVRecord coldestInManyDays() {
+        CSVRecord lowestSoFar = null;
+        DirectoryResource dr = new DirectoryResource();
+        // iterate over files
+        for (File f : dr.selectedFiles()) {
+            FileResource fr = new FileResource(f);
+            // use method to get largest in file.
+            CSVRecord currentRow = coldestHourInFile(fr.getCSVParser());
+            // use method to compare two records
+            lowestSoFar = getSmallestOfTwo(currentRow, lowestSoFar);
+        }
+        //The largestSoFar is the answer
+        return lowestSoFar;
+    }
+    
+    
      public void testcoldestHourInFile () {
         FileResource fr = new FileResource("data/2015/weather-2015-01-01.csv");
         CSVRecord smallest = coldestHourInFile(fr.getCSVParser());
         System.out.println("Coldest temperature was " + smallest.get("TemperatureF") +
                    " at " + smallest.get("TimeEST"));
     }
+    
+     public void testColdestInManyDays () {
+        CSVRecord result = coldestInManyDays();
+        System.out.println("Coldest was " + result.get("TemperatureF") +
+                   " at " + result.get("DateUTC"));
+    }      
+    
     
     public CSVRecord hottestHourInFile(CSVParser parser) {
         //start with largestSoFar as nothing
