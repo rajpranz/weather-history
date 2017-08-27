@@ -19,18 +19,21 @@ public class ProcessCSV {
     }
     
       public CSVRecord getSmallestOfTwo (CSVRecord currentRow, CSVRecord smallestSoFar) {
-        //If largestSoFar is nothing
+
+        double currentTemp = Double.parseDouble(currentRow.get("TemperatureF"));
+        if(currentTemp == -9999){
+            return smallestSoFar;
+        }
+
         if (smallestSoFar == null) {
             smallestSoFar = currentRow;
         }
         //Otherwise
         else {
-            double currentTemp = Double.parseDouble(currentRow.get("TemperatureF"));
+
             double smallestTemp = Double.parseDouble(smallestSoFar.get("TemperatureF"));
             //Check if currentRow’s temperature > largestSoFar’s
-            if(currentTemp == -9999){
-                //-9999 means temperature was not recorded
-            }else if (currentTemp < smallestTemp) {
+          if (currentTemp < smallestTemp) {
                 //If so update largestSoFar to currentRow
                 smallestSoFar = currentRow;
             }
@@ -79,6 +82,70 @@ public class ProcessCSV {
         return largestSoFar;
     }
 
+        public CSVRecord lowestHumidityInManyDays() {
+        CSVRecord lowestSoFar = null;
+        DirectoryResource dr = new DirectoryResource();
+        // iterate over files
+        for (File f : dr.selectedFiles()) {
+            FileResource fr = new FileResource(f);
+            // use method to get largest in file.
+            CSVRecord currentRow = lowestHumidityInFile(fr.getCSVParser());
+            // use method to compare two records
+            lowestSoFar = getLowerHumidity(currentRow, lowestSoFar);
+        }
+        
+        return lowestSoFar;
+    }
+    
+        public CSVRecord lowestHumidityInFile(CSVParser parser) {
+
+        CSVRecord lowestSoFar = null;
+        //For each row (currentRow) in the CSV File
+        for (CSVRecord currentRow : parser) {
+            // use method to compare two records
+            lowestSoFar = getLowerHumidity(currentRow, lowestSoFar);
+        }
+        //The largestSoFar is the answer
+        return lowestSoFar;
+    }
+    
+        public CSVRecord getLowerHumidity (CSVRecord currentRow, CSVRecord smallestSoFar) {
+
+         String humidity = currentRow.get("Humidity");
+         
+         if(humidity.equals("N/A")){
+             return smallestSoFar;
+         }
+            
+        if (smallestSoFar == null) {
+            smallestSoFar = currentRow;
+        }
+        //Otherwise
+        else {
+            double currentHumidity = Double.parseDouble(currentRow.get("Humidity"));
+            double smallestHumidity  = Double.parseDouble(smallestSoFar.get("Humidity"));
+            //Check if currentRow’s temperature > largestSoFar’s
+            if (currentHumidity < smallestHumidity) {
+                //If so update largestSoFar to currentRow
+                smallestSoFar = currentRow;
+            }
+        }
+        return smallestSoFar;
+    }
+    
+      public void testlowestHumidityInFile () {
+        FileResource fr = new FileResource("data/2015/weather-2015-01-02.csv");
+        CSVRecord lowest = lowestHumidityInFile(fr.getCSVParser());
+        System.out.println("lowest humidity was " + lowest.get("Humidity") +
+                   " at " + lowest.get("TimeEST"));
+    }
+    
+    public void testLeastHumidInManyDays () {
+        CSVRecord result = lowestHumidityInManyDays();
+        System.out.println("Lowest Humidity was " + result.get("Humidity") +
+                   " at " + result.get("DateUTC"));
+    }      
+    
     public CSVRecord getLargestOfTwo (CSVRecord currentRow, CSVRecord largestSoFar) {
         //If largestSoFar is nothing
         if (largestSoFar == null) {
